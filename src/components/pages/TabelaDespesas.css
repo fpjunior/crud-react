@@ -1,0 +1,21 @@
+.table-despesas {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+    font-weight: normal;
+    color: #333;
+  }
+  
+  .table-despesas th {
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table-despesas td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
