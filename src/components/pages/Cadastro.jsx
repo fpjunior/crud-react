@@ -9,41 +9,59 @@ import { useEffect } from 'react';
 function Cadastro({ fetchDespesas, location }) {
   const [descricao, setDescricao] = useState('');
   const [tipo, setTipo] = useState('');
+  const [typePayment, setTypePayment] = useState('');
   const [valor, setValor] = useState('');
   const [date, setDate] = useState('');
   const [cadastroSucesso, setCadastroSucesso] = useState(false);
-
+  const [idDespesa, setIdDespesa] = useState(null);
 
   const { id } = useParams();
 
-  if (id) {
-    db.expenses.get(parseInt(id)).then((despesa) => {
-      setDescricao(despesa.descricao);
-      setTipo(despesa.tipo);
-      setValor(despesa.valor);
-      const [dia, mes, ano] = despesa.date.split('/');
-      setDate(new Date(ano, mes - 1, dia));
-    });
-  }
-
+  useEffect(() => {
+    if (id) {
+      db.expenses.get(parseInt(id)).then((despesa) => {
+        setDescricao(despesa.descricao);
+        setTipo(despesa.tipo);
+        setTypePayment(despesa.typePayment);
+        setValor(despesa.valor);
+        const [dia, mes, ano] = despesa.date.split('/');
+        setDate(new Date(ano, mes - 1, dia));
+      });
+    }
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formattedDate = date.toLocaleDateString('pt-BR');
-    console.log(formattedDate);
-
-    db.expenses.put({ id, descricao, tipo, valor, date: formattedDate })
-      .then(() => {
-        setDescricao('');
-        setTipo('');
-        setDate('');
-        setValor('');
-        setCadastroSucesso(true);
-        fetchDespesas();
-      })
-      .catch((error) => console.error(error));
+  
+    if (id) {
+      // atualiza a despesa existente com os novos valores
+      db.expenses.update(parseInt(id), { descricao, tipo, typePayment, valor, date: formattedDate })
+        .then(() => {
+          setDescricao('');
+          setTipo('');
+          setTypePayment('');
+          setValor('');
+          setDate('');
+          setCadastroSucesso(true);
+          fetchDespesas();
+        })
+        .catch((error) => console.error(error));
+    } else {
+      // adiciona uma nova despesa
+      db.expenses.add({ descricao, tipo, typePayment, valor, date: formattedDate })
+        .then(() => {
+          setDescricao('');
+          setTipo('');
+          setTypePayment('');
+          setValor('');
+          setDate('');
+          setCadastroSucesso(true);
+          fetchDespesas();
+        })
+        .catch((error) => console.error(error));
+    }
   };
-
 
   return (
     <form onSubmit={handleSubmit} className="form-cadastro">
@@ -54,10 +72,7 @@ function Cadastro({ fetchDespesas, location }) {
         <input type="text" id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
       </div>
 
-      <div>
-        <label htmlFor="date">Data:</label>
-        <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
-      </div>
+     
 
       <div className="input-tipo">
         <label htmlFor="tipo">Tipo:</label>
@@ -67,9 +82,21 @@ function Cadastro({ fetchDespesas, location }) {
         </select>
       </div>
 
+      <div className="input-typePayment">
+        <label htmlFor="typePayment">Tipo de Pagamento:</label>
+        <select id="typePayment" value={typePayment} onChange={(e) => setTypePayment(e.target.value)}>
+          <option value="pix">Pix</option>
+          <option value="credito">Crédito</option>
+          <option value="dinheiro">Dinheiro</option>
+        </select>
+      </div>
       <div>
         <label htmlFor="valor">Valor:</label>
         <input type="number" id="valor" value={valor} onChange={(e) => setValor(e.target.value)} />
+      </div>
+      <div>
+        <label htmlFor="date">Data:</label>
+        <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
       </div>
 
       <div>
