@@ -6,10 +6,15 @@ import { Link } from 'react-router-dom';
 
 function EditButton({ onClick, id }) {
   return (
+  //   <Button className="btn-delete" variant="danger" onClick={onClick}>
+  //   <BsTrash />
+  //  </Button>
+
+
     <Link to={`/cadastro/${id}`}>
-      <button className="edit-button" onClick={onClick}>
+      <Button className="edit-button" onClick={onClick}>
         <BsPencilSquare />
-      </button>
+      </Button>
     </Link>
   );
 }
