@@ -14,6 +14,11 @@ function TabelaDespesas() {
   const [despesasPerPage] = useState(10);
   const [filtroData, setFiltroData] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState(false); 
+    // Get current despesas
+    const indexOfLastDespesa = currentPage * despesasPerPage;
+    const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
+    const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
+   
 
   useEffect(() => {
     fetchDespesas();
@@ -23,6 +28,24 @@ function TabelaDespesas() {
     db.expenses.toArray().then((dados) => {
       setDespesas(dados);
     });
+  }
+  let despesasExibidas = filtroData ? despesas : currentDespesas;
+  const totalRegistros = despesasExibidas.length;
+
+
+  function handleFiltroDia() {
+    if (filtroData) {
+      setFiltroData(null); // Remova o filtro
+      setFiltroAtivo(false); // Altere o estado de filtroAtivo
+    } else {
+      setFiltroData(new Date().toLocaleDateString('pt-BR'));
+      setFiltroAtivo(true); // Altere o estado de filtroAtivo
+    }
+  }
+
+ 
+  if (filtroData) {
+    despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
   }
 
   function handleDelete(id) {
@@ -38,25 +61,9 @@ function TabelaDespesas() {
     setDespesaEditando(despesa);
   }
 
-  function handleFiltroDia() {
-    if (filtroData) {
-      setFiltroData(null); // Remova o filtro
-      setFiltroAtivo(false); // Altere o estado de filtroAtivo
-    } else {
-      setFiltroData(new Date().toLocaleDateString('pt-BR'));
-      setFiltroAtivo(true); // Altere o estado de filtroAtivo
-    }
-  }
+ 
 
-  let despesasFiltradas = despesas;
-  if (filtroData) {
-    despesasFiltradas = despesas.filter((despesa) => despesa.date === filtroData);
-  }
 
-  // Get current despesas
-  const indexOfLastDespesa = currentPage * despesasPerPage;
-  const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
-  const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -70,9 +77,9 @@ function TabelaDespesas() {
     <div>
       <div className='btn-cadastro'>
         <Link to="/cadastro">
-          <button className="btn-salvar" type="submit">+ Nova Despesa</button>
+          <button className="btn-salvar btn-outline-primary" type="submit">+ Nova Despesa</button>
         </Link>
-        <button onClick={handleFiltroDia}>{filtroAtivo ? 'Remover filtro' : 'Filtrar por dia'}</button>     
+        <button className="btn-salvar"  onClick={handleFiltroDia}>{filtroAtivo ? 'Remover filtro' : 'Filtrar por dia'}</button>     
          </div>
       <Table striped bordered>
         <thead>
@@ -86,7 +93,7 @@ function TabelaDespesas() {
           </tr>
         </thead>
         <tbody>
-          {despesasFiltradas.map((despesa) => (
+          {despesasExibidas.map((despesa) => (
             <tr key={despesa.id}>
               <td>{despesa.descricao}</td>
               <td>{despesa.tipo}</td>
@@ -100,6 +107,11 @@ function TabelaDespesas() {
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="6">Total de registros: {totalRegistros}</td>
+          </tr>
+        </tfoot>
       </Table>
       <Pagination>
         {pageNumbers.map(number => (
