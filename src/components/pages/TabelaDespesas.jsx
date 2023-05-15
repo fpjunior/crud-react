@@ -62,10 +62,16 @@ function TabelaDespesas() {
   function handleEdit(despesa) {
     setDespesaEditando(despesa);
   }
-
  
   // Change page
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    if (pageNumber < 1) {
+      pageNumber = 1; // Limita a página mínima como 1
+    } else if (pageNumber > pageNumbers.length) {
+      pageNumber = pageNumbers.length; // Limita a página máxima como o número total de páginas
+    }
+    setCurrentPage(pageNumber);
+  };
 
   const pageNumbers = [];
   for (let i = 1; i <= Math.ceil(despesas.length / despesasPerPage); i++) {
@@ -78,7 +84,7 @@ function TabelaDespesas() {
         <Link to="/cadastro">
           <button className="btn-salvar btn-outline-primary" type="submit">+ Nova Despesa</button>
         </Link>
-        <button className="btn-salvar"  onClick={handleFiltroDia}>{'Diariamente'}</button>     
+        <button className={`btn-salvar ${filtroAtivo ? 'active' : ''}`}  onClick={handleFiltroDia}>{'Diariamente'}</button>     
         <button className="btn-salvar"  onClick={removeFiltro}>{'Todos'}</button>     
          </div>
       <Table striped bordered>
@@ -113,13 +119,17 @@ function TabelaDespesas() {
           </tr>
         </tfoot>
       </Table>
-      <Pagination>
+     
+        <Pagination>
+        <Pagination.Prev onClick={() => paginate(currentPage - 1)} />
         {pageNumbers.map(number => (
-          <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+          <Pagination.Item  key={number} active={number === currentPage} onClick={() => paginate(number)}>
             {number}
           </Pagination.Item>
         ))}
+          <Pagination.Next onClick={() => paginate(currentPage + 1)} />
       </Pagination>
+     
     </div>
   );
 }

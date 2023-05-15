@@ -28,4 +28,8 @@
     justify-content: space-around;
     padding-bottom: 20px;
   }
-  
+
+  .btn-salvar.active {
+    background-color: #0077ff;
+    color: white;
+  }
