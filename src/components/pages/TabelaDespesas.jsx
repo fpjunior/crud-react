@@ -5,13 +5,15 @@ import EditButton from '../template/EditButton';
 import './TabelaDespesas.css';
 import { Link } from 'react-router-dom';
 import { Table, Pagination } from 'react-bootstrap';
+import { format } from 'date-fns';
 
 function TabelaDespesas() {
   const [despesas, setDespesas] = useState([]);
   const [despesaEditando, setDespesaEditando] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [despesasPerPage] = useState(10);
-  const [filtroData, setFiltroData] = useState(null);
+  const [filtroData, setFiltroData] = useState('');
+  const [filtroAtivo, setFiltroAtivo] = useState(false); 
 
   useEffect(() => {
     fetchDespesas();
@@ -37,15 +39,20 @@ function TabelaDespesas() {
   }
 
   function handleFiltroDia() {
-    setFiltroData(new Date().toLocaleDateString());
-    let despesasFiltradas = despesas;
     if (filtroData) {
-      despesasFiltradas = despesas.filter((despesa) => despesa.date === filtroData);
+      setFiltroData(null); // Remova o filtro
+      setFiltroAtivo(false); // Altere o estado de filtroAtivo
+    } else {
+      setFiltroData(new Date().toLocaleDateString('pt-BR'));
+      setFiltroAtivo(true); // Altere o estado de filtroAtivo
     }
-  
   }
 
- 
+  let despesasFiltradas = despesas;
+  if (filtroData) {
+    despesasFiltradas = despesas.filter((despesa) => despesa.date === filtroData);
+  }
+
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
   const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
@@ -63,10 +70,10 @@ function TabelaDespesas() {
     <div>
       <div className='btn-cadastro'>
         <Link to="/cadastro">
-          <button className="btn-salvar"  type="submit">+ Nova Despesa</button>
+          <button className="btn-salvar" type="submit">+ Nova Despesa</button>
         </Link>
-        <button onClick={handleFiltroDia}>Filtrar por dia</button>
-      </div>
+        <button onClick={handleFiltroDia}>{filtroAtivo ? 'Remover filtro' : 'Filtrar por dia'}</button>     
+         </div>
       <Table striped bordered>
         <thead>
           <tr>
@@ -79,7 +86,7 @@ function TabelaDespesas() {
           </tr>
         </thead>
         <tbody>
-          {currentDespesas.map((despesa) => (
+          {despesasFiltradas.map((despesa) => (
             <tr key={despesa.id}>
               <td>{despesa.descricao}</td>
               <td>{despesa.tipo}</td>
