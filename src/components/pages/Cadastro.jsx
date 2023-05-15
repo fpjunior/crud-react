@@ -8,8 +8,8 @@ import { useEffect } from 'react';
 
 function Cadastro({ fetchDespesas, location }) {
   const [descricao, setDescricao] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [typePayment, setTypePayment] = useState('');
+  const [tipo, setTipo] = useState('despesa');
+  const [typePayment, setTypePayment] = useState('pix');
   const [valor, setValor] = useState('');
   const [date, setDate] = useState('');
   const [cadastroSucesso, setCadastroSucesso] = useState(false);
@@ -72,13 +72,11 @@ function Cadastro({ fetchDespesas, location }) {
         <input type="text" id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
       </div>
 
-     
-
       <div className="input-tipo">
         <label htmlFor="tipo">Tipo:</label>
         <select id="tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
-          <option value="receita">Receita</option>
           <option value="despesa">Despesa</option>
+          <option value="receita">Receita</option>
         </select>
       </div>
 

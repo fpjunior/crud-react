@@ -4,16 +4,14 @@ import DeleteButton from '../template/DeleteButton';
 import EditButton from '../template/EditButton';
 import './TabelaDespesas.css';
 import { Link } from 'react-router-dom';
-
+import { Table, Pagination } from 'react-bootstrap';
 
 function TabelaDespesas() {
-  // const [despesas, setDespesas] = useState([]);
-
-  // const [despesaEditando, setDespesaEditando] = useState(null);
-
   const [despesas, setDespesas] = useState([]);
   const [despesaEditando, setDespesaEditando] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [despesasPerPage] = useState(10);
+  const [filtroData, setFiltroData] = useState(null);
 
   useEffect(() => {
     fetchDespesas();
@@ -34,19 +32,42 @@ function TabelaDespesas() {
     }
   }
 
- function handleEdit(despesa) {
-  setDespesaEditando(despesa);
-}
+  function handleEdit(despesa) {
+    setDespesaEditando(despesa);
+  }
+
+  function handleFiltroDia() {
+    setFiltroData(new Date().toLocaleDateString());
+    let despesasFiltradas = despesas;
+    if (filtroData) {
+      despesasFiltradas = despesas.filter((despesa) => despesa.date === filtroData);
+    }
+  
+  }
+
+ 
+  // Get current despesas
+  const indexOfLastDespesa = currentPage * despesasPerPage;
+  const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
+  const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(despesas.length / despesasPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div>
-
       <div className='btn-cadastro'>
         <Link to="/cadastro">
           <button className="btn-salvar"  type="submit">+ Nova Despesa</button>
         </Link>
+        <button onClick={handleFiltroDia}>Filtrar por dia</button>
       </div>
-      <table className="table-despesas">
+      <Table striped bordered>
         <thead>
           <tr>
             <th>Descrição</th>
@@ -58,7 +79,7 @@ function TabelaDespesas() {
           </tr>
         </thead>
         <tbody>
-          {despesas.map((despesa) => (
+          {currentDespesas.map((despesa) => (
             <tr key={despesa.id}>
               <td>{despesa.descricao}</td>
               <td>{despesa.tipo}</td>
@@ -72,10 +93,16 @@ function TabelaDespesas() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
+      <Pagination>
+        {pageNumbers.map(number => (
+          <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+            {number}
+          </Pagination.Item>
+        ))}
+      </Pagination>
     </div>
   );
 }
-
 
 export default TabelaDespesas;
