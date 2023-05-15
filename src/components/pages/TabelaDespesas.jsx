@@ -34,13 +34,15 @@ function TabelaDespesas() {
 
 
   function handleFiltroDia() {
-    if (filtroData) {
-      setFiltroData(null); // Remova o filtro
-      setFiltroAtivo(false); // Altere o estado de filtroAtivo
-    } else {
+ 
       setFiltroData(new Date().toLocaleDateString('pt-BR'));
       setFiltroAtivo(true); // Altere o estado de filtroAtivo
-    }
+    
+  }
+
+  function removeFiltro() {
+    setFiltroData(null); // Remova o filtro
+    setFiltroAtivo(false); 
   }
 
  
@@ -62,9 +64,6 @@ function TabelaDespesas() {
   }
 
  
-
-
-
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -79,7 +78,8 @@ function TabelaDespesas() {
         <Link to="/cadastro">
           <button className="btn-salvar btn-outline-primary" type="submit">+ Nova Despesa</button>
         </Link>
-        <button className="btn-salvar"  onClick={handleFiltroDia}>{filtroAtivo ? 'Remover filtro' : 'Filtrar por dia'}</button>     
+        <button className="btn-salvar"  onClick={handleFiltroDia}>{'Diariamente'}</button>     
+        <button className="btn-salvar"  onClick={removeFiltro}>{'Todos'}</button>     
          </div>
       <Table striped bordered>
         <thead>
