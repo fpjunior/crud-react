@@ -1,44 +1,68 @@
-import { Navbar, Button, Nav } from 'react-bootstrap';
-import { FaBars } from 'react-icons/fa'; // Importe o ícone do menu hamburguer
-import React, { useState } from 'react';
-import './SideBar.css';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaBars } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-
+import './SideBar.css';
 
 function SideBar() {
+  const [showSidebar, setShowSidebar] = useState(false);
 
-    const [showSidebar, setShowSidebar] = useState(false);
+  const sidebarRef = useRef(null);
 
-    const toggleSidebar = () => {
-        setShowSidebar(!showSidebar);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setShowSidebar(false);
+      }
     };
-    return (
-        <div>
-            {/* Botão do menu hamburguer */}
-            <div className="sidebar-toggle" onClick={toggleSidebar}>
-                <FaBars />
-            </div>
-            {/* Sidebar */}
-            <aside className={`sidebar ${showSidebar ? 'active' : ''}`}>
-                <nav>
-                    <ul>
-                        <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        <li>
-                            <Link to="/cadastro">Cadastro</Link>
-                        </li>
-                        <li>
-                            <Link to="/tabelaDespesas">Tabela</Link>
-                        </li>
-                        <li>
-                            <a href="/sobre">sobre</a>
-                        </li>
-                    </ul>
-                </nav>
-            </aside>
-        </div>
-    );
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
+  const handleClick = () => {
+    setShowSidebar(false);
+  };
+
+  return (
+    <div>
+      <div className="sidebar-toggle" onClick={toggleSidebar}>
+        <FaBars />
+      </div>
+      <aside className={`sidebar ${showSidebar ? 'active' : ''}`} ref={sidebarRef}>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/" onClick={handleClick}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/cadastro" onClick={handleClick}>
+                Cadastro
+              </Link>
+            </li>
+            <li>
+              <Link to="/tabelaDespesas" onClick={handleClick}>
+                Tabela
+              </Link>
+            </li>
+            <li>
+              <a href="/sobre" onClick={handleClick}>
+                Sobre
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    </div>
+  );
 }
 
 export default SideBar;
