@@ -6,6 +6,8 @@ import './TabelaDespesas.css';
 import { Link } from 'react-router-dom';
 import { Table, Pagination } from 'react-bootstrap';
 import { format } from 'date-fns';
+import PillExample from '../template/Badge';
+
 
 function TabelaDespesas() {
   const [despesas, setDespesas] = useState([]);
@@ -13,12 +15,12 @@ function TabelaDespesas() {
   const [currentPage, setCurrentPage] = useState(1);
   const [despesasPerPage] = useState(10);
   const [filtroData, setFiltroData] = useState('');
-  const [filtroAtivo, setFiltroAtivo] = useState(false); 
-    // Get current despesas
-    const indexOfLastDespesa = currentPage * despesasPerPage;
-    const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
-    const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
-   
+  const [filtroAtivo, setFiltroAtivo] = useState(false);
+  // Get current despesas
+  const indexOfLastDespesa = currentPage * despesasPerPage;
+  const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
+  const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
+
 
   useEffect(() => {
     fetchDespesas();
@@ -33,19 +35,20 @@ function TabelaDespesas() {
   const totalRegistros = despesasExibidas.length;
 
 
-  function handleFiltroDia() {
- 
-      setFiltroData(new Date().toLocaleDateString('pt-BR'));
-      setFiltroAtivo(true); // Altere o estado de filtroAtivo
-    
+  function handleFiltroDia(event) {
+    setFiltroData(new Date().toLocaleDateString('pt-BR'));
+    setFiltroAtivo(true); // Altere o estado de filtroAtivo
+    if (event === 'Todos') {
+      setFiltroData(null); // Remova o filtro
+      setFiltroAtivo(false);
+    }
   }
 
   function removeFiltro() {
     setFiltroData(null); // Remova o filtro
-    setFiltroAtivo(false); 
+    setFiltroAtivo(false);
   }
 
- 
   if (filtroData) {
     despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
   }
@@ -62,7 +65,7 @@ function TabelaDespesas() {
   function handleEdit(despesa) {
     setDespesaEditando(despesa);
   }
- 
+
   // Change page
   const paginate = (pageNumber) => {
     if (pageNumber < 1) {
@@ -84,10 +87,9 @@ function TabelaDespesas() {
         <Link to="/cadastro">
           <button className="btn-salvar btn-outline-primary" type="submit">+ Nova Despesa</button>
         </Link>
-        <button className={`btn-salvar ${filtroAtivo ? 'active' : ''}`}  onClick={handleFiltroDia}>{'Diariamente'}</button>     
-        <button className="btn-salvar"  onClick={removeFiltro}>{'Todos'}</button>     
-         </div>
-      <Table striped bordered>
+        <PillExample onClick={(event) => handleFiltroDia(event)}></PillExample>
+      </div>
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>Descrição</th>
@@ -119,17 +121,17 @@ function TabelaDespesas() {
           </tr>
         </tfoot>
       </Table>
-     
-        <Pagination>
+
+      <Pagination>
         <Pagination.Prev onClick={() => paginate(currentPage - 1)} />
         {pageNumbers.map(number => (
-          <Pagination.Item  key={number} active={number === currentPage} onClick={() => paginate(number)}>
+          <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
             {number}
           </Pagination.Item>
         ))}
-          <Pagination.Next onClick={() => paginate(currentPage + 1)} />
+        <Pagination.Next onClick={() => paginate(currentPage + 1)} />
       </Pagination>
-     
+
     </div>
   );
 }

@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import AlertComponent from '../template/Alert';
 
 function Cadastro({ fetchDespesas, location }) {
   const [descricao, setDescricao] = useState('');
@@ -12,7 +13,8 @@ function Cadastro({ fetchDespesas, location }) {
   const [typePayment, setTypePayment] = useState('pix');
   const [valor, setValor] = useState('');
   const [date, setDate] = useState('');
-  const [cadastroSucesso, setCadastroSucesso] = useState(false);
+  const [cadastroSucesso, setCadastroSucesso] = useState(null);
+  const [cadastroErro, setCadastroErro] = useState(false);
   const [idDespesa, setIdDespesa] = useState(null);
 
   const { id } = useParams();
@@ -33,7 +35,7 @@ function Cadastro({ fetchDespesas, location }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formattedDate = date.toLocaleDateString('pt-BR');
-  
+
     if (id) {
       // atualiza a despesa existente com os novos valores
       db.expenses.update(parseInt(id), { descricao, tipo, typePayment, valor, date: formattedDate })
@@ -44,9 +46,14 @@ function Cadastro({ fetchDespesas, location }) {
           setValor('');
           setDate('');
           setCadastroSucesso(true);
+          setCadastroErro(false);
           fetchDespesas();
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          setCadastroSucesso(false);
+          setCadastroErro(true);
+          console.error(error)
+        });
     } else {
       // adiciona uma nova despesa
       db.expenses.add({ descricao, tipo, typePayment, valor, date: formattedDate })
@@ -57,15 +64,28 @@ function Cadastro({ fetchDespesas, location }) {
           setValor('');
           setDate('');
           setCadastroSucesso(true);
+          setCadastroErro(false);
           fetchDespesas();
         })
-        .catch((error) => console.error(error));
+
+        .catch((error) => {
+          setCadastroSucesso(false);
+          setCadastroErro(true);
+          console.error(error)
+        }
+        );
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="form-cadastro">
-      {cadastroSucesso && <p>Cadastro realizado com sucesso!</p>}
+      {cadastroSucesso && (
+        <AlertComponent variant="success" content="Operação realizada com sucesso" show={cadastroSucesso} />
+      )}
+
+      {cadastroErro && (
+        <AlertComponent variant="success" content="Aconteceu um erro" show={cadastroErro} />
+      )}
 
       <div>
         <label htmlFor="descricao">Descrição:</label>

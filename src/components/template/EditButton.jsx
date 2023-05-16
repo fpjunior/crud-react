@@ -5,12 +5,8 @@ import './EditButton.css';
 import { Link } from 'react-router-dom';
 
 function EditButton({ onClick, id }) {
+  
   return (
-  //   <Button className="btn-delete" variant="danger" onClick={onClick}>
-  //   <BsTrash />
-  //  </Button>
-
-
     <Link to={`/cadastro/${id}`}>
       <Button className="edit-button" onClick={onClick}>
         <BsPencilSquare />
