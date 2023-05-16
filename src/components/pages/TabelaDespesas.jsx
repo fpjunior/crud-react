@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Table, Pagination } from 'react-bootstrap';
 import { format } from 'date-fns';
 import PillExample from '../template/Badge';
-
+import moment from 'moment';
 
 function TabelaDespesas() {
   const [despesas, setDespesas] = useState([]);
@@ -16,6 +16,7 @@ function TabelaDespesas() {
   const [despesasPerPage] = useState(10);
   const [filtroData, setFiltroData] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState(false);
+  
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
   const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
@@ -32,26 +33,54 @@ function TabelaDespesas() {
     });
   }
   let despesasExibidas = filtroData ? despesas : currentDespesas;
-  const totalRegistros = despesasExibidas.length;
-
+  
+  despesasExibidas.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateA - dateB;
+  });
 
   function handleFiltroDia(event) {
+    const today = new Date();
+    const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
+
+  
     setFiltroData(new Date().toLocaleDateString('pt-BR'));
     setFiltroAtivo(true); // Altere o estado de filtroAtivo
     if (event === 'Todos') {
       setFiltroData(null); // Remova o filtro
       setFiltroAtivo(false);
     }
-  }
-
-  function removeFiltro() {
-    setFiltroData(null); // Remova o filtro
-    setFiltroAtivo(false);
+    if(event === 'Diariamente'){
+      setFiltroData(null);  // Defina o estado de filtroDiaAtual como true
+      setFiltroData(moment().format('DD/MM/YYYY')); 
+    }
+    if (event === 'Semanal') {
+      setFiltroData(`${firstDayOfWeek.toLocaleDateString('pt-BR')} - ${lastDayOfWeek.toLocaleDateString('pt-BR')}`);
+      setFiltroAtivo(true);
+    }
   }
 
   if (filtroData) {
+    if(filtroData.includes('-')){
+      const [startDate, endDate] = filtroData.split(' - ');
+    
+      despesasExibidas = despesas.filter((despesa) => {
+        const despesaDate = moment(despesa.date, 'DD/MM/YYYY');
+        const startMoment = moment(startDate, 'DD/MM/YYYY');
+        const endMoment = moment(endDate, 'DD/MM/YYYY');
+        return despesaDate.isBetween(startMoment, endMoment, null, '[]');
+      });
+    } else {
+    // despesasExibidas = despesas;
     despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
   }
+}
+
+  // if (filtroData) {
+  //   despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
+  // }
 
   function handleDelete(id) {
     const confirmDelete = window.confirm("Tem certeza que deseja excluir esta despesa?");
@@ -117,7 +146,7 @@ function TabelaDespesas() {
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan="6">Total de registros: {totalRegistros}</td>
+            <td colSpan="6">Total de registros: {despesasExibidas.length}</td>
           </tr>
         </tfoot>
       </Table>
