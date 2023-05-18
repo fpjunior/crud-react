@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import AlertComponent from '../template/Alert';
+import { Form, Button, FormSelect } from 'react-bootstrap';
 
 function Cadastro({ fetchDespesas, location }) {
   const [descricao, setDescricao] = useState('');
@@ -16,6 +17,7 @@ function Cadastro({ fetchDespesas, location }) {
   const [cadastroSucesso, setCadastroSucesso] = useState(null);
   const [cadastroErro, setCadastroErro] = useState(false);
   const [idDespesa, setIdDespesa] = useState(null);
+
 
   const { id } = useParams();
 
@@ -78,7 +80,8 @@ function Cadastro({ fetchDespesas, location }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-cadastro">
+
+    <Form onSubmit={handleSubmit}>
       {cadastroSucesso && (
         <AlertComponent variant="success" content="Operação realizada com sucesso" show={cadastroSucesso} />
       )}
@@ -86,44 +89,70 @@ function Cadastro({ fetchDespesas, location }) {
       {cadastroErro && (
         <AlertComponent variant="success" content="Aconteceu um erro" show={cadastroErro} />
       )}
+      <div>
+        <Form.Group controlId="descricao">
+          <Form.Label>Descrição</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Descrição da despesa"
+            value={descricao}
+            onChange={(event) => setDescricao(event.target.value)}
+          />
+        </Form.Group>
 
-      <div>
-        <label htmlFor="descricao">Descrição:</label>
-        <input type="text" id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+        <Form.Group controlId="tipo">
+          <Form.Label>Tipo</Form.Label>
+          <Form.Select
+            type="text"
+            placeholder="Tipo da despesa"
+            value={tipo}
+            onChange={(event) => setTipo(event.target.value)}>
+            <option value="despesa">Despesa</option>
+            <option value="receita">Receita</option>
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group controlId="typePayment">
+          <Form.Label>Tipo de Pagamento</Form.Label>
+          <Form.Select
+            type="text"
+            placeholder="Tipo de pagamento"
+            value={typePayment}
+            onChange={(event) => setTypePayment(event.target.value)}
+          >
+            <option value="pix">Pix</option>
+            <option value="credito">Crédito</option>
+            <option value="dinheiro">Dinheiro</option>
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group controlId="valor">
+          <Form.Label>Valor</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Valor da despesa"
+            value={valor}
+            onChange={(event) => setValor(event.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="date">
+          <Form.Label>Data</Form.Label>
+          <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
+        </Form.Group>
+
       </div>
 
-      <div className="input-tipo">
-        <label htmlFor="tipo">Tipo:</label>
-        <select id="tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
-          <option value="despesa">Despesa</option>
-          <option value="receita">Receita</option>
-        </select>
+      <div className="div-btn">
+        <div>
+          <button className="btn-salvar" type="submit">Salvar</button>
+        </div>
+        <div>
+          <Link to="/tabelaDespesas">Ver tabela</Link>
+        </div>
       </div>
 
-      <div className="input-typePayment">
-        <label htmlFor="typePayment">Tipo de Pagamento:</label>
-        <select id="typePayment" value={typePayment} onChange={(e) => setTypePayment(e.target.value)}>
-          <option value="pix">Pix</option>
-          <option value="credito">Crédito</option>
-          <option value="dinheiro">Dinheiro</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="valor">Valor:</label>
-        <input type="number" id="valor" value={valor} onChange={(e) => setValor(e.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="date">Data:</label>
-        <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
-      </div>
-
-      <div>
-        <button className="btn-salvar" type="submit">Salvar</button>
-      </div>
-      <div>
-        <Link to="/tabelaDespesas">Ver tabela</Link>
-      </div>
-    </form>
+    </Form>
   );
 }
 

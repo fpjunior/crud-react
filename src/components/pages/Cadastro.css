@@ -53,3 +53,20 @@ p {
 .input-tipo{
   width: 185px;
 }
+
+input[type="text"], select, input[type="number"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+button.btn-salvar {
+  margin-bottom: 20px;
+}
+
+.div-btn{
+  display: grid;
+  justify-items: center;
+}

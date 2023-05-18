@@ -20,7 +20,7 @@ function TabelaDespesas() {
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
   const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
-  const currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
+  let currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
 
 
   useEffect(() => {
@@ -32,9 +32,9 @@ function TabelaDespesas() {
       setDespesas(dados);
     });
   }
-  let despesasExibidas = filtroData ? despesas : currentDespesas;
+  // let currentDespesas = filtroData ? despesas : currentDespesas;
   
-  despesasExibidas.sort((a, b) => {
+  currentDespesas.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
     return dateA - dateB;
@@ -66,7 +66,7 @@ function TabelaDespesas() {
     if(filtroData.includes('-')){
       const [startDate, endDate] = filtroData.split(' - ');
     
-      despesasExibidas = despesas.filter((despesa) => {
+      currentDespesas = despesas.filter((despesa) => {
         const despesaDate = moment(despesa.date, 'DD/MM/YYYY');
         const startMoment = moment(startDate, 'DD/MM/YYYY');
         const endMoment = moment(endDate, 'DD/MM/YYYY');
@@ -74,7 +74,7 @@ function TabelaDespesas() {
       });
     } else {
     // despesasExibidas = despesas;
-    despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
+    currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
   }
 }
 
@@ -110,6 +110,18 @@ function TabelaDespesas() {
     pageNumbers.push(i);
   }
 
+  function getTotalRegistros() {
+    if (filtroData) {
+      return currentDespesas.length;
+    } 
+    if(filtroData === null){
+      return despesas.length;
+    }
+      
+
+    return currentDespesas.length;
+  }
+
   return (
     <div>
       <div className='btn-cadastro'>
@@ -130,7 +142,7 @@ function TabelaDespesas() {
           </tr>
         </thead>
         <tbody>
-          {despesasExibidas.map((despesa) => (
+          {currentDespesas.map((despesa) => (
             <tr key={despesa.id}>
               <td>{despesa.descricao}</td>
               <td>{despesa.tipo}</td>
@@ -146,7 +158,11 @@ function TabelaDespesas() {
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan="6">Total de registros: {despesasExibidas.length}</td>
+            {/* <td colSpan="6">Total de registros: {despesasExibidas.length}</td> */}
+            <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td>
+            {/* <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td> */}
+
+
           </tr>
         </tfoot>
       </Table>
