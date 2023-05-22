@@ -7,6 +7,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import AlertComponent from '../template/Alert';
 import { Form, Button, FormSelect } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+
 
 function Cadastro({ fetchDespesas, location }) {
   const [descricao, setDescricao] = useState('');
@@ -90,56 +92,70 @@ function Cadastro({ fetchDespesas, location }) {
         <AlertComponent variant="success" content="Aconteceu um erro" show={cadastroErro} />
       )}
       <div>
-        <Form.Group controlId="descricao">
-          <Form.Label>Descrição</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Descrição da despesa"
-            value={descricao}
-            onChange={(event) => setDescricao(event.target.value)}
-          />
-        </Form.Group>
+        <Row>
+          <Col>
+            <Form.Group controlId="descricao">
+              <Form.Label>Descrição</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Descrição da despesa"
+                value={descricao}
+                onChange={(event) => setDescricao(event.target.value)}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-        <Form.Group controlId="tipo">
-          <Form.Label>Tipo</Form.Label>
-          <Form.Select
-            type="text"
-            placeholder="Tipo da despesa"
-            value={tipo}
-            onChange={(event) => setTipo(event.target.value)}>
-            <option value="despesa">Despesa</option>
-            <option value="receita">Receita</option>
-          </Form.Select>
-        </Form.Group>
+        <Row>
+          <Col>
+            <Form.Group controlId="tipo">
+              <Form.Label>Tipo</Form.Label>
+              <Form.Select
+                type="text"
+                placeholder="Tipo da despesa"
+                value={tipo}
+                onChange={(event) => setTipo(event.target.value)}>
+                <option value="despesa">Despesa</option>
+                <option value="receita">Receita</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group controlId="typePayment">
+              <Form.Label>Tipo de Pagamento</Form.Label>
+              <Form.Select
+                type="text"
+                placeholder="Tipo de pagamento"
+                value={typePayment}
+                onChange={(event) => setTypePayment(event.target.value)}
+              >
+                <option value="pix">Pix</option>
+                <option value="credito">Crédito</option>
+                <option value="dinheiro">Dinheiro</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+        </Row>
 
-        <Form.Group controlId="typePayment">
-          <Form.Label>Tipo de Pagamento</Form.Label>
-          <Form.Select
-            type="text"
-            placeholder="Tipo de pagamento"
-            value={typePayment}
-            onChange={(event) => setTypePayment(event.target.value)}
-          >
-            <option value="pix">Pix</option>
-            <option value="credito">Crédito</option>
-            <option value="dinheiro">Dinheiro</option>
-          </Form.Select>
-        </Form.Group>
-
-        <Form.Group controlId="valor">
-          <Form.Label>Valor</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Valor da despesa"
-            value={valor}
-            onChange={(event) => setValor(event.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="date">
-          <Form.Label>Data</Form.Label>
-          <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
-        </Form.Group>
+        <Row>
+          <Col>
+            <Form.Group controlId="valor">
+              <Form.Label>Valor</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Valor da despesa"
+                value={valor}
+                onChange={(event) => setValor(event.target.value)}
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group controlId="date">
+              <Form.Label>Data</Form.Label>
+              <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" />
+            </Form.Group>
+          </Col>
+        </Row>
 
       </div>
 

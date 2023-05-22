@@ -20,15 +20,15 @@ function App() {
       <div className="">
         <SideBar></SideBar>
         <main>
+      <Footer />
           <Routes>
-            <Route path="/" element={<TelaPrincipal />} />
+            <Route path="/"element={<Cadastro fetchDespesas={fetchDespesas} />} />
             <Route path="/cadastro/:id" element={<Cadastro fetchDespesas={fetchDespesas} />} />
             <Route path="/cadastro" element={<Cadastro fetchDespesas={fetchDespesas} />} />
             <Route path="/tabelaDespesas" element={<TabelaDespesas fetchDespesas={fetchDespesas} />} />
           </Routes>
         </main>
       </div>
-      <Footer />
     </Router>
   );
 }
