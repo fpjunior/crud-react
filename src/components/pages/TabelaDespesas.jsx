@@ -29,22 +29,21 @@ function TabelaDespesas() {
 
   function fetchDespesas() {
     db.expenses.toArray().then((dados) => {
+      dados.sort((a, b) => {
+        const [dayA, monthA, yearA] = a.date.split("/");
+        const [dayB, monthB, yearB] = b.date.split("/");
+        return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
+      });
       setDespesas(dados);
     });
   }
-  // let currentDespesas = filtroData ? despesas : currentDespesas;
 
-  currentDespesas.sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return dateB - dateA;
-  });
+
 
   function handleFiltroDia(event) {
     const today = new Date();
     const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
     const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
-
 
     setFiltroData(new Date().toLocaleDateString('pt-BR'));
     setFiltroAtivo(true); // Altere o estado de filtroAtivo
@@ -85,14 +84,9 @@ function TabelaDespesas() {
         return despesaDate.isBetween(startMoment, endMoment, null, '[]');
       });
     } else {
-      // despesasExibidas = despesas;
       currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
     }
   }
-
-  // if (filtroData) {
-  //   despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
-  // }
 
   function handleDelete(id) {
     const confirmDelete = window.confirm("Tem certeza que deseja excluir esta despesa?");
@@ -123,17 +117,7 @@ function TabelaDespesas() {
   }
 
   function getTotalRegistros() {
-    if (filtroData) {
-      return currentDespesas.length;
-    } else {
-
-    }
-    if (!filtroData) {
-      return despesas.length;
-    }
-
-
-    return currentDespesas.length;
+    return filtroData ? currentDespesas.length : despesas.length;
   }
 
   return (
@@ -169,11 +153,7 @@ function TabelaDespesas() {
         </tbody>
         <tfoot>
           <tr>
-            {/* <td colSpan="6">Total de registros: {despesasExibidas.length}</td> */}
             <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td>
-            {/* <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td> */}
-
-
           </tr>
         </tfoot>
       </Table>
