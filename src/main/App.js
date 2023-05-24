@@ -15,6 +15,7 @@ function App() {
   };
 
   return (
+    <>
     <Router>
       <Logo />
       <div className="">
@@ -28,8 +29,10 @@ function App() {
             <Route path="/tabelaDespesas" element={<TabelaDespesas fetchDespesas={fetchDespesas} />} />
           </Routes>
         </main>
+      <TabelaDespesas></TabelaDespesas>
       </div>
     </Router>
+    </>
   );
 }
 

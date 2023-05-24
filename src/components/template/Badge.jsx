@@ -33,18 +33,18 @@ function PillExample({ onClick }) {
         Semanal
       </Badge>{' '}
       <Badge
+        onClick={() => handleBadgeClick('Mensal')}
+        pill
+        bg={activeBadge === 'Mensal' ? 'primary' : 'secondary'}
+      >
+        Mensal
+      </Badge>{' '}
+      <Badge
         onClick={() => handleBadgeClick('Anual')}
         pill
         bg={activeBadge === 'Anual' ? 'primary' : 'secondary'}
       >
         Anual
-      </Badge>{' '}
-      <Badge
-        onClick={() => handleBadgeClick('Danger')}
-        pill
-        bg={activeBadge === 'Danger' ? 'primary' : 'secondary'}
-      >
-        Danger
       </Badge>{' '}
     </div>
   );

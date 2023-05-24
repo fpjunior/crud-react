@@ -16,7 +16,7 @@ function TabelaDespesas() {
   const [despesasPerPage] = useState(10);
   const [filtroData, setFiltroData] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState(false);
-  
+
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
   const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
@@ -33,11 +33,11 @@ function TabelaDespesas() {
     });
   }
   // let currentDespesas = filtroData ? despesas : currentDespesas;
-  
+
   currentDespesas.sort((a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
-    return dateA - dateB;
+    return dateB - dateA;
   });
 
   function handleFiltroDia(event) {
@@ -45,27 +45,39 @@ function TabelaDespesas() {
     const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
     const lastDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 6));
 
-  
+
     setFiltroData(new Date().toLocaleDateString('pt-BR'));
     setFiltroAtivo(true); // Altere o estado de filtroAtivo
-    if (event === 'Todos') {
-      setFiltroData(null); // Remova o filtro
-      setFiltroAtivo(false);
-    }
-    if(event === 'Diariamente'){
-      setFiltroData(null);  // Defina o estado de filtroDiaAtual como true
-      setFiltroData(moment().format('DD/MM/YYYY')); 
-    }
-    if (event === 'Semanal') {
-      setFiltroData(`${firstDayOfWeek.toLocaleDateString('pt-BR')} - ${lastDayOfWeek.toLocaleDateString('pt-BR')}`);
-      setFiltroAtivo(true);
+    switch (event) {
+      case 'Todos':
+        setFiltroData(null); // Remova o filtro
+        setFiltroAtivo(false);
+        break;
+      case 'Diariamente':
+        setFiltroData(null);  // Defina o estado de filtroDiaAtual como true
+        setFiltroData(moment().format('DD/MM/YYYY'));
+        break;
+      case 'Semanal':
+        setFiltroData(`${firstDayOfWeek.toLocaleDateString('pt-BR')} - ${lastDayOfWeek.toLocaleDateString('pt-BR')}`);
+        setFiltroAtivo(true);
+        break;
+      case 'Mensal':
+        const currentDate = new Date();
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        setFiltroData(`${firstDayOfMonth.toLocaleDateString('pt-BR')} - ${lastDayOfMonth.toLocaleDateString('pt-BR')}`);
+        setFiltroAtivo(true);
+        break;
+
+      default:
+        break;
     }
   }
 
   if (filtroData) {
-    if(filtroData.includes('-')){
+    if (filtroData.includes('-')) {
       const [startDate, endDate] = filtroData.split(' - ');
-    
+
       currentDespesas = despesas.filter((despesa) => {
         const despesaDate = moment(despesa.date, 'DD/MM/YYYY');
         const startMoment = moment(startDate, 'DD/MM/YYYY');
@@ -73,10 +85,10 @@ function TabelaDespesas() {
         return despesaDate.isBetween(startMoment, endMoment, null, '[]');
       });
     } else {
-    // despesasExibidas = despesas;
-    currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
+      // despesasExibidas = despesas;
+      currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
+    }
   }
-}
 
   // if (filtroData) {
   //   despesasExibidas = despesas.filter((despesa) => despesa.date === filtroData);
@@ -113,11 +125,13 @@ function TabelaDespesas() {
   function getTotalRegistros() {
     if (filtroData) {
       return currentDespesas.length;
-    } 
-    if(filtroData === null){
+    } else {
+
+    }
+    if (!filtroData) {
       return despesas.length;
     }
-      
+
 
     return currentDespesas.length;
   }
@@ -125,9 +139,6 @@ function TabelaDespesas() {
   return (
     <div>
       <div className='btn-cadastro'>
-        <Link to="/cadastro">
-          <button className="btn-salvar btn-outline-primary" type="submit">+ Nova Despesa</button>
-        </Link>
         <PillExample onClick={(event) => handleFiltroDia(event)}></PillExample>
       </div>
       <Table striped bordered hover responsive>

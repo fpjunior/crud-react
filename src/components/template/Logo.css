@@ -4,9 +4,13 @@ aside.logo {
     justify-content: center;
     align-items: center;
 }
+a.logo{
+    display: flex;
+    justify-content: center;
+}
 
 aside.logo img {
     padding: 0 15px;
-    width: 100%;
+    width: 50%;
 }
 
