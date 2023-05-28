@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 function EditButton({ onClick, id }) {
   
   return (
-    <Link to={`/cadastro/${id}`}>
+    <Link>
       <Button className="edit-button" onClick={onClick}>
         <BsPencilSquare />
       </Button>

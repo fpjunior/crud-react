@@ -10,7 +10,7 @@ import { Form, Button } from 'react-bootstrap';
 import { Row, Col } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 
-function Cadastro({ fetchDespesas, location }) {
+function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
   const [descricao, setDescricao] = useState('');
   const [tipo, setTipo] = useState('despesa');
   const [typePayment, setTypePayment] = useState('pix');
@@ -18,16 +18,13 @@ function Cadastro({ fetchDespesas, location }) {
   const [date, setDate] = useState('');
   const [cadastroSucesso, setCadastroSucesso] = useState(null);
   const [cadastroErro, setCadastroErro] = useState(false);
-  const [idDespesa, setIdDespesa] = useState(null);
-  const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
-  const { id } = useParams();
+  const id  = idEdit;
 
   useEffect(() => {
     if (id) {
+      setCadastroSucesso(false);
       db.expenses.get(parseInt(id)).then((despesa) => {
         setDescricao(despesa.descricao);
         setTipo(despesa.tipo);
@@ -37,7 +34,7 @@ function Cadastro({ fetchDespesas, location }) {
         setDate(new Date(ano, mes - 1, dia));
       });
     }
-  }, [id]);
+  }, [id, openModal]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,15 +51,16 @@ function Cadastro({ fetchDespesas, location }) {
           setDate('');
           setCadastroSucesso(true);
           setCadastroErro(false);
-          fetchDespesas();
+          // fetchDespesas();
           setTimeout(() => {
-            setShow(false);
+            // setShow(false);
+            closeModal();
           }, 1500);
         })
         .catch((error) => {
           setCadastroSucesso(false);
           setCadastroErro(true);
-          console.error(error)
+          // console.error(error)
         });
     } else {
       // adiciona uma nova despesa
@@ -75,16 +73,18 @@ function Cadastro({ fetchDespesas, location }) {
           setDate('');
           setCadastroSucesso(true);
           setCadastroErro(false);
-          fetchDespesas();
+          // fetchDespesas();
           setTimeout(() => {
-            setShow(false);
+            // setShow(false);
+            closeModal();
+
           }, 1500);
         })
 
         .catch((error) => {
           setCadastroSucesso(false);
           setCadastroErro(true);
-          console.error(error)
+          // console.error(error)
         }
         );
     }
@@ -93,11 +93,11 @@ function Cadastro({ fetchDespesas, location }) {
   return (
     <>
     <div className="div-nova-despesa">
-      <Button variant="primary" onClick={handleShow}>
+      {/* <Button variant="primary" onClick={handleShow}>
         + Nova Despesa/Receita
-      </Button>
+      </Button> */}
     </div>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={openModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>Cadastrar/Editar Despesa</Modal.Title>
         </Modal.Header>

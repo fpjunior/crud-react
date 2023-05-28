@@ -8,14 +8,22 @@ import { Table, Pagination } from 'react-bootstrap';
 import { format } from 'date-fns';
 import PillExample from '../template/Badge';
 import moment from 'moment';
+import Cadastro from './Cadastro';
 
-function TabelaDespesas() {
+function TabelaDespesas({ openEdit }) {
   const [despesas, setDespesas] = useState([]);
   const [despesaEditando, setDespesaEditando] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [despesasPerPage] = useState(10);
+  const [idEdit, setIdEdit] = useState(null);
   const [filtroData, setFiltroData] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState(false);
+
+  const [somaDespesas, setSomaDespesas] = useState(0);
+
+  const [showModal, setShowModal] = useState(false);
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
 
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
@@ -25,6 +33,7 @@ function TabelaDespesas() {
 
   useEffect(() => {
     fetchDespesas();
+    calcularSomaDespesas();
   }, []);
 
   function fetchDespesas() {
@@ -37,6 +46,27 @@ function TabelaDespesas() {
       setDespesas(dados);
     });
   }
+
+  const calcularSomaDespesas = () => {
+    db.expenses.toArray().then((despesas) => {
+      
+        let soma = 0;
+        despesas.forEach((despesa) => {
+          if(despesa.tipo === 'despesa'){
+          const numero = parseFloat(despesa.valor.replace(',', '.'));
+          soma += numero;
+          }
+        });
+        
+        const somaFormatada = soma.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        });
+        
+        setSomaDespesas(somaFormatada);
+
+    });
+  };
 
 
 
@@ -99,6 +129,8 @@ function TabelaDespesas() {
 
   function handleEdit(despesa) {
     setDespesaEditando(despesa);
+    setShowModal(true);
+    setIdEdit(despesa.id);
   }
 
   // Change page
@@ -122,8 +154,12 @@ function TabelaDespesas() {
 
   return (
     <div>
+      <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} />
       <div className='btn-cadastro'>
         <PillExample onClick={(event) => handleFiltroDia(event)}></PillExample>
+      </div>
+      <div>
+        <label>Soma das despesas: {somaDespesas}</label>
       </div>
       <Table striped bordered hover responsive>
         <thead>
@@ -147,6 +183,7 @@ function TabelaDespesas() {
               <td>
                 <DeleteButton onClick={() => handleDelete(despesa.id)} />
                 <EditButton id={`${despesa.id}`} onClick={() => handleEdit(despesa)} />
+
               </td>
             </tr>
           ))}
