@@ -20,6 +20,7 @@ function TabelaDespesas({ openEdit }) {
   const [filtroAtivo, setFiltroAtivo] = useState(false);
 
   const [somaDespesas, setSomaDespesas] = useState(0);
+  const [somaReceitas, setSomaReceitas] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
   const handleShow = () => setShowModal(true);
@@ -47,23 +48,33 @@ function TabelaDespesas({ openEdit }) {
     });
   }
 
+  function returnValueMonetary(valor) {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  }
+
+
   const calcularSomaDespesas = () => {
     db.expenses.toArray().then((despesas) => {
-      
-        let soma = 0;
-        despesas.forEach((despesa) => {
-          if(despesa.tipo === 'despesa'){
-          const numero = parseFloat(despesa.valor.replace(',', '.'));
-          soma += numero;
-          }
-        });
-        
-        const somaFormatada = soma.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        });
-        
-        setSomaDespesas(somaFormatada);
+
+      let somaDespesas = 0;
+      let somaReceitas = 0;
+      despesas.forEach((despesa) => {
+        const numero = parseFloat(despesa.valor.replace(',', '.'));
+        if (despesa.tipo === 'despesa') {
+          somaDespesas += numero;
+        }
+        if (despesa.tipo === 'receita') {
+          somaReceitas += numero;
+
+        }
+      });
+
+      setSomaReceitas(returnValueMonetary(somaReceitas))
+      setSomaDespesas(returnValueMonetary(somaDespesas));
+      // setSomaReceitas(somaFormatada)
 
     });
   };
@@ -160,6 +171,9 @@ function TabelaDespesas({ openEdit }) {
       </div>
       <div>
         <label>Soma das despesas: {somaDespesas}</label>
+      </div>
+      <div>
+        <label>Soma das Receitas: {somaReceitas}</label>
       </div>
       <Table striped bordered hover responsive>
         <thead>
