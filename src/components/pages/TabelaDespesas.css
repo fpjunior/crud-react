@@ -33,3 +33,9 @@
     background-color: #0077ff;
     color: white;
   }
+
+  .div-nova-despesa{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+  }

@@ -10,7 +10,7 @@ import { Form, Button } from 'react-bootstrap';
 import { Row, Col } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 
-function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
+function Cadastro({ fetchDespesas, openModal, closeModal, idEdit, atualizarTabela }) {
   const [descricao, setDescricao] = useState('');
   const [tipo, setTipo] = useState('despesa');
   const [typePayment, setTypePayment] = useState('pix');
@@ -18,8 +18,6 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
   const [date, setDate] = useState('');
   const [cadastroSucesso, setCadastroSucesso] = useState(null);
   const [cadastroErro, setCadastroErro] = useState(false);
-
-
   const id  = idEdit;
 
   useEffect(() => {
@@ -51,9 +49,9 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
           setDate('');
           setCadastroSucesso(true);
           setCadastroErro(false);
-          // fetchDespesas();
           setTimeout(() => {
-            // setShow(false);
+            setCadastroSucesso(null);
+            atualizarTabela();
             closeModal();
           }, 1500);
         })
@@ -76,6 +74,9 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
           // fetchDespesas();
           setTimeout(() => {
             // setShow(false);
+            setCadastroSucesso(null)
+            atualizarTabela();
+
             closeModal();
 
           }, 1500);
@@ -92,11 +93,7 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit }) {
 
   return (
     <>
-    <div className="div-nova-despesa">
-      {/* <Button variant="primary" onClick={handleShow}>
-        + Nova Despesa/Receita
-      </Button> */}
-    </div>
+   
       <Modal show={openModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>Cadastrar/Editar Despesa</Modal.Title>

@@ -12,12 +12,8 @@ import { Form, Button } from 'react-bootstrap';
 function App() {
 
   const [showModal, setShowModal] = useState(false);
-  const handleShow = () => setShowModal(true);
+  // const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
-
-  const fetchDespesas = () => {
-    // lógica para buscar as despesas no banco de dados
-  };
 
   return (
     <>
@@ -34,11 +30,6 @@ function App() {
             <Route path="/tabelaDespesas" element={<TabelaDespesas fetchDespesas={fetchDespesas} />} /> */}
             </Routes>
           </main>
-          <div className="div-nova-despesa">
-            <Button variant="primary" onClick={handleShow}>
-              + Nova Despesa/Receita
-            </Button>
-          </div>
           <Cadastro openModal={showModal} closeModal={handleClose} />
           <TabelaDespesas openEdit={showModal} />
         </div>

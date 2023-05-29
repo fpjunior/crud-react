@@ -9,8 +9,9 @@ import { format } from 'date-fns';
 import PillExample from '../template/Badge';
 import moment from 'moment';
 import Cadastro from './Cadastro';
+import { Form, Button } from 'react-bootstrap';
 
-function TabelaDespesas({ openEdit }) {
+function TabelaDespesas({ openEdit, atualizarTabela }) {
   const [despesas, setDespesas] = useState([]);
   const [despesaEditando, setDespesaEditando] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,8 +24,8 @@ function TabelaDespesas({ openEdit }) {
   const [somaReceitas, setSomaReceitas] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
-  const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
 
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
@@ -34,7 +35,6 @@ function TabelaDespesas({ openEdit }) {
 
   useEffect(() => {
     fetchDespesas();
-    calcularSomaDespesas();
   }, []);
 
   function fetchDespesas() {
@@ -45,6 +45,7 @@ function TabelaDespesas({ openEdit }) {
         return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
       });
       setDespesas(dados);
+      calcularSomaDespesas();
     });
   }
 
@@ -54,7 +55,6 @@ function TabelaDespesas({ openEdit }) {
       currency: 'BRL',
     });
   }
-
 
   const calcularSomaDespesas = () => {
     db.expenses.toArray().then((despesas) => {
@@ -74,12 +74,9 @@ function TabelaDespesas({ openEdit }) {
 
       setSomaReceitas(returnValueMonetary(somaReceitas))
       setSomaDespesas(returnValueMonetary(somaDespesas));
-      // setSomaReceitas(somaFormatada)
 
     });
   };
-
-
 
   function handleFiltroDia(event) {
     const today = new Date();
@@ -165,7 +162,12 @@ function TabelaDespesas({ openEdit }) {
 
   return (
     <div>
-      <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} />
+      <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas}/>
+      <div className="div-nova-despesa">
+      <Button variant="primary" onClick={handleShow}>
+              + Nova Despesa/Receita
+            </Button>
+           </div>
       <div className='btn-cadastro'>
         <PillExample onClick={(event) => handleFiltroDia(event)}></PillExample>
       </div>
