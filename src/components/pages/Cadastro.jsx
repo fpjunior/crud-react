@@ -18,7 +18,7 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit, atualizarTabel
   const [date, setDate] = useState('');
   const [cadastroSucesso, setCadastroSucesso] = useState(null);
   const [cadastroErro, setCadastroErro] = useState(false);
-  const id  = idEdit;
+  const id = idEdit;
 
   useEffect(() => {
     if (id) {
@@ -31,6 +31,12 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit, atualizarTabel
         const [dia, mes, ano] = despesa.date.split('/');
         setDate(new Date(ano, mes - 1, dia));
       });
+    } else {
+      setDescricao('');
+      setTipo('despesa');
+      setTypePayment('pix');
+      setValor('');
+      setDate();
     }
   }, [id, openModal]);
 
@@ -93,7 +99,7 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit, atualizarTabel
 
   return (
     <>
-   
+
       <Modal show={openModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>Cadastrar/Editar Despesa</Modal.Title>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import db from '../../database';
 import DeleteButton from '../template/DeleteButton';
 import EditButton from '../template/EditButton';
+import MyCard from '../template/Card';
 import './TabelaDespesas.css';
 import { Link } from 'react-router-dom';
 import { Table, Pagination } from 'react-bootstrap';
@@ -10,6 +11,8 @@ import PillExample from '../template/Badge';
 import moment from 'moment';
 import Cadastro from './Cadastro';
 import { Form, Button } from 'react-bootstrap';
+import { TfiArrowDown } from "react-icons/tfi";
+import { TfiArrowUp } from "react-icons/tfi";
 
 function TabelaDespesas({ openEdit, atualizarTabela }) {
   const [despesas, setDespesas] = useState([]);
@@ -45,7 +48,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
         return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
       });
       setDespesas(dados);
-      calcularSomaDespesas();
+      calcularSomaDespesas(dados);
     });
   }
 
@@ -56,12 +59,13 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     });
   }
 
-  const calcularSomaDespesas = () => {
+  const calcularSomaDespesas = (despesasParams) => {
+
     db.expenses.toArray().then((despesas) => {
 
       let somaDespesas = 0;
       let somaReceitas = 0;
-      despesas.forEach((despesa) => {
+      despesasParams.forEach((despesa) => {
         const numero = parseFloat(despesa.valor.replace(',', '.'));
         if (despesa.tipo === 'despesa') {
           somaDespesas += numero;
@@ -125,6 +129,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
       currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
     }
   }
+  calcularSomaDespesas(currentDespesas);
 
   function handleDelete(id) {
     const confirmDelete = window.confirm("Tem certeza que deseja excluir esta despesa?");
@@ -139,6 +144,12 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     setDespesaEditando(despesa);
     setShowModal(true);
     setIdEdit(despesa.id);
+  }
+
+  function novoRegistro(despesa) {
+    setDespesaEditando(null);
+    setShowModal(true);
+    setIdEdit(null);
   }
 
   // Change page
@@ -160,22 +171,39 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     return filtroData ? currentDespesas.length : despesas.length;
   }
 
+  const getValorClass = (tipo) => {
+    if (tipo === 'receita') {
+      return 'style-receita';
+    } else if (tipo === 'despesa') {
+      return 'style-despesa';
+    }
+    return '';
+  }
+
+  function renderIcon(iconType) {
+    if (iconType === 'despesa') {
+      return <TfiArrowDown size={24} />
+
+    }
+    if (iconType === 'receita') {
+      return <TfiArrowUp size={24} />
+    }
+  }
+
   return (
     <div>
-      <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas}/>
+      <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas} />
       <div className="div-nova-despesa">
-      <Button variant="primary" onClick={handleShow}>
-              + Nova Despesa/Receita
-            </Button>
-           </div>
+        <Button variant="primary" onClick={novoRegistro}>
+          + Nova Despesa/Receita
+        </Button>
+      </div>
       <div className='btn-cadastro'>
         <PillExample onClick={(event) => handleFiltroDia(event)}></PillExample>
       </div>
-      <div>
-        <label>Soma das despesas: {somaDespesas}</label>
-      </div>
-      <div>
-        <label>Soma das Receitas: {somaReceitas}</label>
+      <div className='div-cards'>
+        <MyCard icon={renderIcon('despesa')} title="Total Saída" content={somaDespesas}></MyCard>
+        <MyCard icon={renderIcon('receita')} title="Total Entrada" content={somaReceitas}> </MyCard>
       </div>
       <Table striped bordered hover responsive>
         <thead>
@@ -191,15 +219,14 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
         <tbody>
           {currentDespesas.map((despesa) => (
             <tr key={despesa.id}>
-              <td>{despesa.descricao}</td>
-              <td>{despesa.tipo}</td>
-              <td>R$ {despesa.valor}</td>
-              <td>{despesa.typePayment}</td>
-              <td>{despesa.date}</td>
+              <td className={getValorClass(despesa.tipo)}>{despesa.descricao}</td>
+              <td className={getValorClass(despesa.tipo)}>{despesa.tipo}</td>
+              <td className={getValorClass(despesa.tipo)}>{despesa.valor}</td>
+              <td className={getValorClass(despesa.tipo)}>{despesa.typePayment}</td>
+              <td className={getValorClass(despesa.tipo)}>{despesa.date}</td>
               <td>
                 <DeleteButton onClick={() => handleDelete(despesa.id)} />
                 <EditButton id={`${despesa.id}`} onClick={() => handleEdit(despesa)} />
-
               </td>
             </tr>
           ))}

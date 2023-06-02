@@ -39,3 +39,28 @@
     justify-content: center;
     margin-bottom: 18px;
   }
+
+  .style-receita,
+  .style-receita td {
+    color: green;
+  }
+  
+  .style-despesa,
+  .style-despesa td {
+    color: red!important;
+  }
+
+  button.btn-delete.btn.btn-danger {
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
+  button.edit-button.btn.btn-primary {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .div-cards{
+    display: flex;
+    justify-content: space-evenly;
+  }

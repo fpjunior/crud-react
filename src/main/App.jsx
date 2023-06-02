@@ -7,20 +7,18 @@ import Logo from '../components/template/Logo';
 import SideBar from '../components/template/SideBar';
 import './App.css'; // Importe um arquivo CSS para estilização
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
 
 function App() {
 
   const [showModal, setShowModal] = useState(false);
-  // const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
   return (
     <>
       <Router>
         <Logo />
-        <div className="">
           <SideBar></SideBar>
+        <div className="div-principal">
           <main>
             <Footer />
             <Routes>
