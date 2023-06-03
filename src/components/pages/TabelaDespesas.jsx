@@ -13,6 +13,7 @@ import Cadastro from './Cadastro';
 import { Form, Button } from 'react-bootstrap';
 import { TfiArrowDown } from "react-icons/tfi";
 import { TfiArrowUp } from "react-icons/tfi";
+import DataFile from '../pages/DataFile';
 
 function TabelaDespesas({ openEdit, atualizarTabela }) {
   const [despesas, setDespesas] = useState([]);
@@ -27,14 +28,15 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
   const [somaReceitas, setSomaReceitas] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
   const handleClose = () => setShowModal(false);
+  const handleCloseBackup = () => setShowModal2(false);
   const handleShow = () => setShowModal(true);
 
   // Get current despesas
   const indexOfLastDespesa = currentPage * despesasPerPage;
   const indexOfFirstDespesa = indexOfLastDespesa - despesasPerPage;
   let currentDespesas = despesas.slice(indexOfFirstDespesa, indexOfLastDespesa);
-
 
   useEffect(() => {
     fetchDespesas();
@@ -129,6 +131,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
       currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
     }
   }
+
   calcularSomaDespesas(currentDespesas);
 
   function handleDelete(id) {
@@ -150,6 +153,10 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     setDespesaEditando(null);
     setShowModal(true);
     setIdEdit(null);
+  }
+
+  function backup() {
+    setShowModal2(true);
   }
 
   // Change page
@@ -182,20 +189,26 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
 
   function renderIcon(iconType) {
     if (iconType === 'despesa') {
-      return <TfiArrowDown size={24} />
+      return <TfiArrowUp size={24} />
 
     }
     if (iconType === 'receita') {
-      return <TfiArrowUp size={24} />
+      return <TfiArrowDown size={24} />
     }
   }
 
   return (
     <div>
+     
+      <DataFile openModal2={showModal2} closeModal={handleCloseBackup} atualizarTabela={fetchDespesas} />
       <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas} />
+    
       <div className="div-nova-despesa">
-        <Button variant="primary" onClick={novoRegistro}>
+        <Button className='new-record' variant="primary" onClick={novoRegistro}>
           + Nova Despesa/Receita
+        </Button>
+        <Button variant="primary" onClick={backup}>
+          Backup
         </Button>
       </div>
       <div className='btn-cadastro'>
@@ -211,7 +224,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
             <th>Descrição</th>
             <th>Tipo</th>
             <th>Valor</th>
-            <th>Tipo de Pagamento</th>
+            <th>Origem</th>
             <th>Data</th>
             <th>Operações</th>
           </tr>
@@ -231,23 +244,19 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
             </tr>
           ))}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td>
-          </tr>
-        </tfoot>
       </Table>
-
-      <Pagination>
-        <Pagination.Prev onClick={() => paginate(currentPage - 1)} />
-        {pageNumbers.map(number => (
-          <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
-            {number}
-          </Pagination.Item>
-        ))}
-        <Pagination.Next onClick={() => paginate(currentPage + 1)} />
-      </Pagination>
-
+      <div className='foot'>
+        <Pagination>
+          <Pagination.Prev onClick={() => paginate(currentPage - 1)} />
+          {pageNumbers.map(number => (
+            <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+              {number}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next onClick={() => paginate(currentPage + 1)} />
+        </Pagination>
+        <td colSpan="6">Mostrando {currentDespesas.length} de {getTotalRegistros()} registros</td>
+      </div>
     </div>
   );
 }

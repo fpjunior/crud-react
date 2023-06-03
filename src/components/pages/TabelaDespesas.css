@@ -64,3 +64,11 @@
     display: flex;
     justify-content: space-evenly;
   }
+  .foot{
+    display:flex;
+    justify-content: space-between;
+  }
+
+  .new-record{
+    margin-right: 15px;
+  }
