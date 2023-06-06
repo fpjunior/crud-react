@@ -14,3 +14,13 @@
 .icon-title{
     display: flex;
 }
+
+.mb-2.card.bg-light.text-dark {
+    width: 11rem !important;
+    height: 6rem;
+}
+
+.mb-2.card.bg-light {
+    --bs-bg-opacity: 10;
+     background-color: none!important;
+}
