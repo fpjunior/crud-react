@@ -50,7 +50,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
         return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
       });
       setDespesas(dados);
-      calcularSomaDespesas(dados);
+      // calcularSomaDespesas(dados);
     });
   }
 
@@ -95,6 +95,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
       case 'Todos':
         setFiltroData(null); // Remova o filtro
         setFiltroAtivo(false);
+        calcularSomaDespesas(despesas);
         break;
       case 'Diariamente':
         setFiltroData(null);  // Defina o estado de filtroDiaAtual como true
@@ -130,9 +131,9 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     } else {
       currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
     }
+    calcularSomaDespesas(currentDespesas);
   }
 
-  calcularSomaDespesas(currentDespesas);
 
   function handleDelete(id) {
     const confirmDelete = window.confirm("Tem certeza que deseja excluir esta despesa?");
@@ -199,10 +200,10 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
 
   return (
     <div>
-     
+
       <DataFile openModal2={showModal2} closeModal={handleCloseBackup} atualizarTabela={fetchDespesas} />
       <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas} />
-    
+
       <div className="div-nova-despesa">
         <Button className='new-record' variant="primary" onClick={novoRegistro}>
           + Nova Despesa/Receita
