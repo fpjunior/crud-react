@@ -1,21 +1,12 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import TelaPrincipal from '../components/pages/TelaPrincipal';
+import { BrowserRouter as Router, Routes } from 'react-router-dom';
 import Cadastro from '../components/pages/Cadastro';
-import DataFile from '../components/pages/DataFile';
 import TabelaDespesas from '../components/pages/TabelaDespesas';
 import Footer from '../components/template/Footer';
 import Logo from '../components/template/Logo';
 import SideBar from '../components/template/SideBar';
 import './App.css'; // Importe um arquivo CSS para estilização
 import React, { useState } from 'react';
-
-
-import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
-import db from '../database'; 
-import { Button } from 'react-bootstrap';
-
-import { RiDownloadLine } from "react-icons/ri";
+import MyNavbar from '../components/template/Navbar';
 
 function App() {
 
@@ -37,9 +28,10 @@ function App() {
             <Route path="/tabelaDespesas" element={<TabelaDespesas fetchDespesas={fetchDespesas} />} /> */}
             </Routes>
           </main>
-          <Cadastro openModal={showModal} closeModal={handleClose} />
+          {/* <Cadastro openModal={showModal} closeModal={handleClose} /> */}
           <TabelaDespesas openEdit={showModal} />
         </div>
+          <MyNavbar className="my-navbar"/>
       </Router>
     </>
   );
