@@ -72,3 +72,12 @@
   .new-record{
     margin-right: 15px;
   }
+
+  td {
+    font-weight: 300;
+    font-family: sans-serif;
+}
+
+.table-responsive {
+  height: 590px;
+}
