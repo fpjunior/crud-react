@@ -99,7 +99,6 @@ function Cadastro({ fetchDespesas, openModal, closeModal, idEdit, atualizarTabel
 
   return (
     <>
-
       <Modal show={openModal} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>Cadastrar/Editar Despesa</Modal.Title>

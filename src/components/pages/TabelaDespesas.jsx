@@ -42,16 +42,20 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     fetchDespesas();
   }, []);
 
-  function fetchDespesas() {
-    db.expenses.toArray().then((dados) => {
+  async function fetchDespesas() {
+    try {
+      const dados = await db.expenses.toArray();
       dados.sort((a, b) => {
         const [dayA, monthA, yearA] = a.date.split("/");
         const [dayB, monthB, yearB] = b.date.split("/");
         return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
       });
+
       setDespesas(dados);
-      // calcularSomaDespesas(dados);
-    });
+
+    } catch (err) {
+
+    }
   }
 
   function returnValueMonetary(valor) {
@@ -61,10 +65,9 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
     });
   }
 
-  const calcularSomaDespesas = (despesasParams) => {
-
-    db.expenses.toArray().then((despesas) => {
-
+  async function calcularSomaDespesas(despesasParams) {
+    try {
+      const despesas = await db.expenses.toArray();
       let somaDespesas = 0;
       let somaReceitas = 0;
       despesasParams.forEach((despesa) => {
@@ -74,15 +77,15 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
         }
         if (despesa.tipo === 'receita') {
           somaReceitas += numero;
-
         }
       });
-
-      setSomaReceitas(returnValueMonetary(somaReceitas))
+  
+      setSomaReceitas(returnValueMonetary(somaReceitas));
       setSomaDespesas(returnValueMonetary(somaDespesas));
-
-    });
-  };
+    } catch (error) {
+      // Trate o erro aqui
+    }
+  }
 
   function handleFiltroDia(event) {
     const today = new Date();
@@ -119,19 +122,25 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
   }
 
   if (filtroData) {
-    if (filtroData.includes('-')) {
-      const [startDate, endDate] = filtroData.split(' - ');
+    let startDate, endDate;
 
-      currentDespesas = despesas.filter((despesa) => {
-        const despesaDate = moment(despesa.date, 'DD/MM/YYYY');
-        const startMoment = moment(startDate, 'DD/MM/YYYY');
-        const endMoment = moment(endDate, 'DD/MM/YYYY');
-        return despesaDate.isBetween(startMoment, endMoment, null, '[]');
-      });
+    if (filtroData.includes('-')) {
+      [startDate, endDate] = filtroData.split(' - ');
     } else {
-      currentDespesas = despesas.filter((despesa) => despesa.date === filtroData);
+      startDate = endDate = filtroData;
     }
-    calcularSomaDespesas(currentDespesas);
+
+    const startMoment = moment(startDate, 'DD/MM/YYYY');
+    const endMoment = moment(endDate, 'DD/MM/YYYY');
+
+    currentDespesas = despesas.filter((despesa) => {
+      const despesaDate = moment(despesa.date, 'DD/MM/YYYY');
+      return despesaDate.isBetween(startMoment, endMoment, null, '[]');
+    });
+
+    if (currentPage === 1) {
+      calcularSomaDespesas(currentDespesas);
+    }
   }
 
 
@@ -157,7 +166,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
   }
 
   function backup() {
-    setShowModal2(true);
+    fetchDespesas()
   }
 
   // Change page
@@ -176,6 +185,9 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
   }
 
   function getTotalRegistros() {
+    if (filtroData === '') {
+      calcularSomaDespesas(currentDespesas);
+    }
     return filtroData ? currentDespesas.length : despesas.length;
   }
 
@@ -201,7 +213,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
   return (
     <div>
 
-      <DataFile openModal2={showModal2} closeModal={handleCloseBackup} atualizarTabela={fetchDespesas} />
+      {/* <DataFile openModal2={showModal2} closeModal={handleCloseBackup} atualizarTabela={fetchDespesas} /> */}
       <Cadastro idEdit={idEdit} openModal={showModal} closeModal={handleClose} atualizarTabela={fetchDespesas} />
 
       <div className="div-nova-despesa">
@@ -209,7 +221,7 @@ function TabelaDespesas({ openEdit, atualizarTabela }) {
           + Nova Despesa/Receita
         </Button>
         <Button variant="primary" onClick={backup}>
-          Backup
+          Atualizar Tabela
         </Button>
       </div>
       <div className='btn-cadastro'>

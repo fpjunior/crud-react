@@ -79,7 +79,6 @@ const exportData = async () => {
 
 const saveBackupToDevice = (fileBlob, fileName) => {
     if (window.cordova && window.cordova.file && window.cordova.file.externalDataDirectory) {
-      // Salvar o arquivo usando Cordova File Plugin
       const fileDir = window.cordova.file.externalDataDirectory;
       const filePath = fileDir + fileName;
   
@@ -87,6 +86,8 @@ const saveBackupToDevice = (fileBlob, fileName) => {
         dirEntry.getFile(fileName, { create: true }, function (fileEntry) {
           fileEntry.createWriter(function (fileWriter) {
             fileWriter.onwriteend = function() {
+              // Arquivo salvo com sucesso
+              // Adicione aqui o código para notificar o usuário ou realizar outras ações
               setCadastroSucesso(true);
               setTimeout(handleSubmit, 1500);
             };
@@ -94,7 +95,20 @@ const saveBackupToDevice = (fileBlob, fileName) => {
               console.error('Erro ao salvar o arquivo:', e);
               handleError(e);
             };
-            fileWriter.write(fileBlob);
+  
+            // Converta o Blob para ArrayBuffer
+            const fileReader = new FileReader();
+            fileReader.onloadend = function() {
+              const arrayBuffer = this.result;
+  
+              // Escreva o ArrayBuffer no arquivo
+              fileWriter.write(arrayBuffer);
+            };
+            fileReader.onerror = function(e) {
+              console.error('Erro ao ler o arquivo:', e);
+              handleError(e);
+            };
+            fileReader.readAsArrayBuffer(fileBlob);
           }, handleError);
         }, handleError);
       }, handleError);
@@ -106,8 +120,6 @@ const saveBackupToDevice = (fileBlob, fileName) => {
     }
   };
   
-  
-
 const handleError = (error) => {
   console.error('Erro ao salvar o arquivo:', error);
 };
